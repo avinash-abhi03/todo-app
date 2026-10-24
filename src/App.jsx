@@ -1,88 +1,148 @@
-
 import { useEffect, useState } from "react";
-import TodoForm from "./components/TodoForm";
-import TodoList from "./components/TodoList";
-import TodoFilter from "./components/TodoFilter";
 import "./App.css";
 
+const initialTasks = [
+  { id: 1, title: "Learn React basics", completed: false },
+  { id: 2, title: "Build my first application", completed: true },
+];
+
 function App() {
-  const [todos, setTodos] = useState(() => {
+  const [tasks, setTasks] = useState(() => {
     try {
-      return JSON.parse(localStorage.getItem("todos")) || [];
+      const saved = localStorage.getItem("todo-app-tasks");
+      return saved ? JSON.parse(saved) : initialTasks;
     } catch {
-      return [];
+      return initialTasks;
     }
   });
-
+  const [input, setInput] = useState("");
   const [filter, setFilter] = useState("all");
 
   useEffect(() => {
-    localStorage.setItem("todos", JSON.stringify(todos));
-  }, [todos]);
+    localStorage.setItem("todo-app-tasks", JSON.stringify(tasks));
+  }, [tasks]);
 
-  function addTodo(text) {
-    const newTodo = {
-      id: crypto.randomUUID(),
-      text,
-      completed: false,
-    };
-
-    setTodos((current) => [...current, newTodo]);
+  function addTask(event) {
+    event.preventDefault();
+    const title = input.trim();
+    if (!title) return;
+    setTasks((current) => [
+      ...current,
+      { id: Date.now(), title, completed: false },
+    ]);
+    setInput("");
   }
 
-  function toggleTodo(id) {
-    setTodos((current) =>
-      current.map((todo) =>
-        todo.id === id
-          ? { ...todo, completed: !todo.completed }
-          : todo
+  function toggleTask(id) {
+    setTasks((current) =>
+      current.map((task) =>
+        task.id === id ? { ...task, completed: !task.completed } : task
       )
     );
   }
 
-  function deleteTodo(id) {
-    setTodos((current) =>
-      current.filter((todo) => todo.id !== id)
-    );
+  function deleteTask(id) {
+    setTasks((current) => current.filter((task) => task.id !== id));
   }
 
-  const filteredTodos = todos.filter((todo) => {
-    if (filter === "active") return !todo.completed;
-    if (filter === "completed") return todo.completed;
+  function clearCompleted() {
+    setTasks((current) => current.filter((task) => !task.completed));
+  }
+
+  const visibleTasks = tasks.filter((task) => {
+    if (filter === "active") return !task.completed;
+    if (filter === "completed") return task.completed;
     return true;
   });
 
-  const remaining = todos.filter(
-    (todo) => !todo.completed
-  ).length;
+  const completedCount = tasks.filter((task) => task.completed).length;
+  const remainingCount = tasks.length - completedCount;
 
   return (
     <main className="app">
-      <header className="app-header">
-        <p className="eyebrow">MY PRODUCTIVITY SPACE</p>
-        <h1>My TODO List</h1>
-        <p>Small steps. Big progress.</p>
+      <header className="header">
+        <div className="brand-icon">✓</div>
+        <h1>My Tasks</h1>
+        <p>Plan your day. Make progress.</p>
       </header>
 
       <section className="todo-card">
-        <TodoForm onAdd={addTodo} />
+        <form className="add-form" onSubmit={addTask}>
+          <input
+            type="text"
+            value={input}
+            onChange={(event) => setInput(event.target.value)}
+            placeholder="What do you need to do?"
+            aria-label="New task"
+            maxLength={200}
+          />
+          <button type="submit" className="add-button">
+            + Add
+          </button>
+        </form>
 
-        <TodoList
-          todos={filteredTodos}
-          onToggle={toggleTodo}
-          onDelete={deleteTodo}
-        />
+        <div className="stats">
+          <span>{remainingCount} remaining</span>
+          <span>{completedCount} completed</span>
+        </div>
 
-        <TodoFilter
-          filter={filter}
-          setFilter={setFilter}
-          remaining={remaining}
-        />
+        <nav className="filters" aria-label="Filter tasks">
+          {["all", "active", "completed"].map((name) => (
+            <button
+              key={name}
+              type="button"
+              className={filter === name ? "filter active-filter" : "filter"}
+              onClick={() => setFilter(name)}
+            >
+              {name[0].toUpperCase() + name.slice(1)}
+            </button>
+          ))}
+        </nav>
+
+        <ul className="task-list">
+          {visibleTasks.map((task) => (
+            <li key={task.id} className={task.completed ? "task done" : "task"}>
+              <label className="task-label">
+                <input
+                  type="checkbox"
+                  checked={task.completed}
+                  onChange={() => toggleTask(task.id)}
+                />
+                <span>{task.title}</span>
+              </label>
+              <button
+                className="delete-button"
+                type="button"
+                onClick={() => deleteTask(task.id)}
+                aria-label={`Delete ${task.title}`}
+                title="Delete task"
+              >
+                ×
+              </button>
+            </li>
+          ))}
+        </ul>
+
+        {visibleTasks.length === 0 && (
+          <div className="empty-state">
+            <span>🎯</span>
+            <p>
+              {tasks.length === 0
+                ? "No tasks yet. Add your first task!"
+                : "No tasks in this category."}
+            </p>
+          </div>
+        )}
+
+        <footer className="card-footer">
+          <span>{tasks.length} total tasks</span>
+          <button type="button" onClick={clearCompleted}>
+            Clear completed
+          </button>
+        </footer>
       </section>
 
-      <footer className="app-note">
-        Your tasks stay saved in this browser.
-      </footer>
+      <p className="bottom-note">Small steps every day lead to big results.</p>
     </main>
   );
 }
