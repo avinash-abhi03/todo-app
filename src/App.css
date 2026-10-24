@@ -1,0 +1,172 @@
+
+.app {
+  width: min(100% - 32px, 680px);
+  margin: 55px auto;
+}
+
+.app-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.eyebrow {
+  color: #7664d8;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 2px;
+}
+
+.app-header h1 {
+  font-size: clamp(32px, 7vw, 48px);
+  margin: 12px 0;
+}
+
+.app-header p:last-child {
+  color: #77758b;
+}
+
+.todo-card {
+  background: white;
+  border: 1px solid #e9e7f3;
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: 0 15px 50px #29205212;
+}
+
+.todo-form {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.todo-form input {
+  flex: 1;
+  min-width: 0;
+  padding: 13px;
+  border: 1px solid #ddd9eb;
+  border-radius: 10px;
+  font: inherit;
+}
+
+.todo-form input:focus {
+  outline: 2px solid #9b8cf5;
+  outline-offset: 2px;
+}
+
+button {
+  cursor: pointer;
+  font: inherit;
+}
+
+.todo-form button {
+  background: #7664d8;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 12px 18px;
+  font-weight: 700;
+}
+
+.todo-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.todo-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 15px 0;
+  border-bottom: 1px solid #efedf5;
+}
+
+.todo-label {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  overflow-wrap: anywhere;
+}
+
+.todo-label input {
+  accent-color: #7664d8;
+  width: 17px;
+  height: 17px;
+  flex-shrink: 0;
+}
+
+.completed .todo-label span {
+  text-decoration: line-through;
+  color: #9995a9;
+}
+
+.delete-button {
+  border: none;
+  background: #fff0f0;
+  color: #c04444;
+  border-radius: 8px;
+  padding: 7px 10px;
+}
+
+.empty-message {
+  color: #88849a;
+  text-align: center;
+  padding: 30px 0;
+}
+
+.todo-footer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding-top: 20px;
+  color: #77758b;
+  font-size: 13px;
+}
+
+.filter-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.filter-buttons button {
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 7px;
+  padding: 6px 9px;
+  color: #68647b;
+}
+
+.filter-buttons button.selected {
+  color: #6553ca;
+  background: #f0edff;
+  border-color: #dcd5ff;
+}
+
+.app-note {
+  text-align: center;
+  margin-top: 20px;
+  color: #88849a;
+  font-size: 13px;
+}
+
+@media (max-width: 480px) {
+  .app {
+    margin: 30px auto;
+  }
+
+  .todo-card {
+    padding: 16px;
+  }
+
+  .todo-form {
+    flex-direction: column;
+  }
+
+  .todo-form button {
+    width: 100%;
+  }
+}
